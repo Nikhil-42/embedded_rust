@@ -3,12 +3,17 @@
 mod animations;
 
 enum Orientation {
-    YDown, XUp, YUp, XDown
+    YDown,
+    XUp,
+    YUp,
+    XDown,
 }
 
 use rand::Rng;
 
-use animations::{Animation, Life, FromRaw, Rainbow, BADAPPLE_FRAMES, rotate_90, rotate_180, rotate_270};
+use animations::{
+    rotate_180, rotate_270, rotate_90, Animation, FromRaw, Life, Rainbow, BADAPPLE_FRAMES,
+};
 // pick a panicking behavior
 use panic_halt as _;
 
@@ -16,12 +21,12 @@ use panic_halt as _;
 use adafruit_feather_rp2040::hal::{self as hal, Clock};
 use adafruit_feather_rp2040::pac;
 
+use fugit::RateExtU32;
 use rp2040_hal::pio::PIOExt;
 use rp2040_hal::rosc::RingOscillator;
 use smart_leds::brightness;
-use ws2812_pio::Ws2812;
-use fugit::RateExtU32;
 use smart_leds::SmartLedsWrite;
+use ws2812_pio::Ws2812;
 
 use adafruit_feather_rp2040::{
     entry,
@@ -83,16 +88,22 @@ fn main() -> ! {
     );
 
     // Set up the accelerometer
-    let i2c = hal::I2C::i2c1(pac.I2C1, pins.sda.into_mode(), pins.scl.into_mode(), 400.kHz(), &mut pac.RESETS, &clocks.system_clock);
+    let i2c = hal::I2C::i2c1(
+        pac.I2C1,
+        pins.sda.into_mode(),
+        pins.scl.into_mode(),
+        400.kHz(),
+        &mut pac.RESETS,
+        &clocks.system_clock,
+    );
     let mut lis3dh = Lis3dh::new_i2c(i2c, SlaveAddr::Default).unwrap();
-
 
     let mut delay_timer =
         cortex_m::delay::Delay::new(core.SYST, clocks.system_clock.freq().to_Hz());
     let mut rng = RingOscillator::new(pac.ROSC).initialize();
 
     let mut rainbow: Rainbow = Default::default();
-    let mut badapple = FromRaw::new(BADAPPLE_FRAMES);//FromRaw::new(BADAPPLE_FRAMES);
+    let mut badapple = FromRaw::new(BADAPPLE_FRAMES); //FromRaw::new(BADAPPLE_FRAMES);
     let mut rick_roll = FromRaw::new(animations::RICK_ROLL);
     let mut life = Life::new(rng.gen(), rng.gen());
 
@@ -106,14 +117,11 @@ fn main() -> ! {
 
         if x > 0.9 {
             mode = Orientation::XUp;
-        }
-        else if x < -0.9 {
+        } else if x < -0.9 {
             mode = Orientation::XDown;
-        }
-        else if y > 0.9 {
+        } else if y > 0.9 {
             mode = Orientation::YUp;
-        }
-        else if y < -0.9 {
+        } else if y < -0.9 {
             mode = Orientation::YDown;
         }
 
@@ -122,24 +130,26 @@ fn main() -> ! {
                 let frame = rainbow.to_list();
                 rainbow.next();
                 (frame, 255)
-            },
+            }
             Orientation::XUp => {
                 let frame = life.to_list();
                 life.next();
                 (rotate_90(frame), 40)
-            },
+            }
             Orientation::YUp => {
                 let frame = rick_roll.to_list();
                 rick_roll.next();
                 (rotate_180(frame), 25)
-            },
+            }
             Orientation::XDown => {
                 let frame = badapple.to_list();
                 badapple.next();
                 (rotate_270(frame), 25)
             }
         };
-        neomatrix.write(brightness(frame.iter().copied(), scale)).unwrap();
+        neomatrix
+            .write(brightness(frame.iter().copied(), scale))
+            .unwrap();
         delay_timer.delay_us(1000_000 / 24u32);
     }
 }

@@ -1,12 +1,11 @@
-use core::hash::{Hash, Hasher};
 #[allow(deprecated)]
 use core::hash::SipHasher;
+use core::hash::{Hash, Hasher};
 
 use smart_leds::{
     hsv::{hsv2rgb, Hsv},
-    RGB8
+    RGB8,
 };
-
 
 const NUM_PIXELS: usize = 64;
 const PIXEL_WIDTH: usize = 3;
@@ -116,7 +115,6 @@ impl Animation for FromRaw {
     }
 }
 
-
 #[derive(Default)]
 pub struct Squares {
     frame: usize,
@@ -186,7 +184,10 @@ impl Life {
                 *cell = hasher.finish() % 2 == 0;
             }
         }
-        Self { data, increment_counter: 0 }
+        Self {
+            data,
+            increment_counter: 0,
+        }
     }
 
     fn count_neighbors(&self, x: usize, y: usize) -> u8 {
