@@ -98,23 +98,31 @@ fn main() -> ! {
     );
     let mut lis3dh = Lis3dh::new_i2c(i2c, SlaveAddr::Default).unwrap();
 
+    // Set up the delay timer for enforing 24 fps
     let mut delay_timer =
         cortex_m::delay::Delay::new(core.SYST, clocks.system_clock.freq().to_Hz());
+    
+    // Initialize Ring Oscillator for random number generation
     let mut rng = RingOscillator::new(pac.ROSC).initialize();
 
+    // Initialize animations
     let mut rainbow: Rainbow = Default::default();
     let mut badapple = FromRaw::new(BADAPPLE_FRAMES); //FromRaw::new(BADAPPLE_FRAMES);
     let mut rick_roll = FromRaw::new(animations::RICK_ROLL);
     let mut life = Life::new(rng.gen(), rng.gen());
 
     let mut mode: Orientation = Orientation::YDown;
+
+    // Scale acceleration to +/- 1G
     let scale = 64.0f32 / 0.004f32;
 
     loop {
+        // Read data from accelerometer
         let bytes = lis3dh.read_accel_bytes().unwrap_or_default();
         let x = (i16::from_le_bytes([bytes[0], bytes[1]]) as f32) / scale;
         let y = (i16::from_le_bytes([bytes[2], bytes[3]]) as f32) / scale;
 
+        // Update mode base on orientation
         if x > 0.9 {
             mode = Orientation::XUp;
         } else if x < -0.9 {
@@ -125,6 +133,7 @@ fn main() -> ! {
             mode = Orientation::YDown;
         }
 
+        // Play the appropriate animation
         let (frame, scale) = match mode {
             Orientation::YDown => {
                 let frame = rainbow.to_list();
@@ -150,6 +159,8 @@ fn main() -> ! {
         neomatrix
             .write(brightness(frame.iter().copied(), scale))
             .unwrap();
+
+        // Wait for 24 fps
         delay_timer.delay_us(1000_000 / 24u32);
     }
 }
