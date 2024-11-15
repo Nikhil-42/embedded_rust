@@ -1,0 +1,32 @@
+[package]
+authors = ["Nikhil Iyer <iyer.h.nikhil@gmail.com>"]
+edition = "2021"
+readme = "README.md"
+name = "embedded_rust"
+version = "0.1.0"
+
+[dependencies]
+panic-halt = "0.2.0"
+cortex-m = "0.7.6"
+cortex-m-rt = "0.7.1"
+embedded-time = "0.12.1"
+embedded-hal = "0.2.7"
+rp2040-hal = "0.7.0"
+adafruit-feather-rp2040 = "0.5.0"
+ws2812-pio = "0.5.0"
+fugit = "0.3.5"
+smart-leds = "0.3.0"
+
+lis3dh = "0.4.2"
+
+usbd-serial = "0.1.1"
+usb-device = "0.2.9"
+
+rand = {version = "0.8.5", default-features=false, features = ["small_rng"]}
+defmt = "0.3.8"
+
+# this lets you use `cargo fix`!
+[[bin]]
+name = "embedded_rust"
+test = false
+bench = false
