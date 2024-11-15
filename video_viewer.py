@@ -1,3 +1,4 @@
+#!.venv/bin/python3
 import cv2
 import sys
 import os

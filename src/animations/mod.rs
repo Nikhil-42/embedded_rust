@@ -73,10 +73,11 @@ impl Animation for Rainbow {
         data
     }
 }
-pub const BADAPPLE_FRAMES: &[u8; 1262400] = include_bytes!("badapple.raw");
-// pub const PULSE_FRAMES: &[u8; 18432] = include_bytes!("pulse.raw");
-pub const RICK_ROLL: &[u8; 36480] = include_bytes!("rick_roll.raw");
 
+
+pub const BADAPPLE_FRAMES: &[u8; 1262400] = include_bytes!("badapple.raw");
+pub const RICK_ROLL: &[u8; 36480] = include_bytes!("rick_roll.raw");
+// pub const PARKOUR: &[u8; 172800] = include_bytes!("parkour.raw");
 pub struct FromRaw {
     data: &'static [u8],
     frame: usize,

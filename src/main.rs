@@ -12,7 +12,7 @@ enum Orientation {
 use rand::Rng;
 
 use animations::{
-    rotate_180, rotate_270, rotate_90, Animation, FromRaw, Life, Rainbow, BADAPPLE_FRAMES,
+    rotate_180, rotate_270, rotate_90, Animation, FromRaw, Life, Rainbow,
 };
 // pick a panicking behavior
 use panic_halt as _;
@@ -78,7 +78,7 @@ fn main() -> ! {
     // Set up the timer
     let timer = hal::Timer::new(pac.TIMER, &mut pac.RESETS);
 
-    // Set up the WS2912 pio
+    // Set up the WS2812 pio
     let mut neomatrix = Ws2812::new(
         pins.d5.into_mode(),
         &mut pio,
@@ -107,7 +107,7 @@ fn main() -> ! {
 
     // Initialize animations
     let mut rainbow: Rainbow = Default::default();
-    let mut badapple = FromRaw::new(BADAPPLE_FRAMES); //FromRaw::new(BADAPPLE_FRAMES);
+    let mut badapple = FromRaw::new(animations::BADAPPLE_FRAMES);
     let mut rick_roll = FromRaw::new(animations::RICK_ROLL);
     let mut life = Life::new(rng.gen(), rng.gen());
 
