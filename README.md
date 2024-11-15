@@ -15,7 +15,6 @@ Rust:
 - build.rs - Build script for facilitating linking against the memory.x file
 - memory.x - Memory layout for the RP2040 for the linker
 
-This project is developed and maintained by the [Cortex-M team][team].
 
 ## Dependencies
 
